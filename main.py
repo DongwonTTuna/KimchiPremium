@@ -1,24 +1,50 @@
-import time
-
-from selenium import webdriver
-from telegram.ext import Updater
-
-updater = Updater('TELEGRAM_BOT_TOKEN')
+from bs4 import BeautifulSoup
+import requests, pyupbit, random, time
+from telegram.ext import Updater, CommandHandler
+try:
+    f = open("/kimchipre.txt",'r')
+    f.close()
+except:
+    f = open("/kimchipre.txt",'w')
+    f.close()
+updater = Updater('TELEGRAM_BOT_TOKEN',use_context=True)
+dispatcher = updater.dispatcher
 def get_data():
-    options = webdriver.ChromeOptions()
-    options.add_argument("--headless")
-    browser = webdriver.Chrome("chromedriver.exe",desired_capabilities=options.to_capabilities())
-    try:
-        browser.get("https://scolkg.com/")
-        a = browser.find_element_by_xpath('//*[@id="app_coinboard"]/div[2]/table/tbody/tr[1]/td[6]').text
-        browser.quit()
-        return float(a[a.find('(') + 1:len(a) - 2])
-    except:
-        updater.bot.sendMessage(TELEGRAM_CHAT_CODE, "김프 사이트에서 데이터를 읽어오고 편집하는데 실패하였습니다.")
+    url = "https://coinmarketcap.com/ko/currencies/bitcoin/"
+    r = requests.get(url).text
+    soup = BeautifulSoup(r, 'html.parser')
+    elems = str(soup.find_all("div", class_='priceValue___11gHJ'))
+    elems = float(elems[elems.find("₩") + 1:elems.find('</')].replace(',', ''))
+    price = pyupbit.get_current_price("KRW-BTC")
+    return (price - elems) / elems * 100
+def add(update, context):
+    with open("/kimchipre.txt",'w') as f:
+        a = ' '.join(context.args)
+        f.write(a)
+def help(update):
+    updater.bot.sendMessage(TELEGRAM_USER_ID, "/set 퍼센트 [이상,이하]")
+add_h = CommandHandler('set', add)
+help_h = CommandHandler('help', help)
+dispatcher.add_handler(add_h)
+dispatcher.add_handler(help_h)
+updater.start_polling()
 while True:
+    with open("/kimchipre.txt", 'r') as f:
+        p = f.read()
+    if p == '':
+        time.sleep(600)
+        continue
+    p = p.split(' ')
     a = get_data()
-    if a >= 15:
-        for d in range(0, 15):
-            updater.bot.sendMessage(TELEGRAM_CHAT_CODE, "김치 프리미엄이 15%를 상회하였습니다.")
-    print('ok')
-    time.sleep(300)
+    print(a)
+    if p[1] == '이상':
+         if a >= float(p[0]):
+            for d in range(0, 15):
+                updater.bot.sendMessage(TELEGRAM_USER_ID, "김치 프리미엄이 "+ str(a) +"%입니다!")
+    elif p[1] == '이하':
+        if a <= float(p[0]):
+            for d in range(0, 15):
+                updater.bot.sendMessage(TELEGRAM_USER_ID, "김치 프리미엄이 " + str(a) + "%입니다!")
+    else:
+        updater.bot.sendMessage(TELEGRAM_USER_ID, "잘못 입력하셨습니다.")
+    time.sleep(random.randrange(30,60))
