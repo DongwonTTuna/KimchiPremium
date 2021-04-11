@@ -7,7 +7,7 @@ try:
 except:
     f = open("/kimchipre.txt",'w')
     f.close()
-updater = Updater('TELEGRAM_BOT_TOKEN',use_context=True)
+updater = Updater('1777022701:AAHog5Yjp0NdyOsjSHBMkgFz5EneOGFrssk',use_context=True)
 dispatcher = updater.dispatcher
 def get_data():
     url = "https://coinmarketcap.com/ko/currencies/bitcoin/"
@@ -22,7 +22,7 @@ def add(update, context):
         a = ' '.join(context.args)
         f.write(a)
 def help(update):
-    updater.bot.sendMessage(TELEGRAM_USER_ID, "/set 퍼센트 [이상,이하]")
+    updater.bot.sendMessage(917186410, "/set 퍼센트 [이상,이하]")
 add_h = CommandHandler('set', add)
 help_h = CommandHandler('help', help)
 dispatcher.add_handler(add_h)
@@ -40,11 +40,16 @@ while True:
     if p[1] == '이상':
          if a >= float(p[0]):
             for d in range(0, 15):
-                updater.bot.sendMessage(TELEGRAM_USER_ID, "김치 프리미엄이 "+ str(a) +"%입니다!")
+                updater.bot.sendMessage(917186410, "김치 프리미엄이 "+ str(a) +"%입니다!")
+            with open("/kimchipre.txt", 'w') as f:
+                f.write("")
     elif p[1] == '이하':
         if a <= float(p[0]):
             for d in range(0, 15):
-                updater.bot.sendMessage(TELEGRAM_USER_ID, "김치 프리미엄이 " + str(a) + "%입니다!")
+                updater.bot.sendMessage(917186410, "김치 프리미엄이 " + str(a) + "%입니다!")
+            with open("/kimchipre.txt", 'w') as f:
+                f.write("")
+
     else:
-        updater.bot.sendMessage(TELEGRAM_USER_ID, "잘못 입력하셨습니다.")
+        updater.bot.sendMessage(917186410, "잘못 입력하셨습니다.")
     time.sleep(random.randrange(30,60))
