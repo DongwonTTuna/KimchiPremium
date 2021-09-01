@@ -13,7 +13,7 @@ def get_data():
     url = "https://coinmarketcap.com/ko/currencies/bitcoin/"
     r = requests.get(url).text
     soup = BeautifulSoup(r, 'html.parser')
-    elems = str(soup.find_all("div", class_='priceValue___11gHJ'))
+    elems = str(soup.find_all("div", class_='priceValue smallerPrice'))
     elems = float(elems[elems.find("₩") + 1:elems.find('</')].replace(',', ''))
     price = pyupbit.get_current_price("KRW-BTC")
     return (price - elems) / elems * 100
