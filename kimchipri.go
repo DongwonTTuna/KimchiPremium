@@ -29,7 +29,7 @@ var (
 
 var bp *tb.Bot
 var client *upbit.Client
-var user = &tb.User{ID: USERID}
+var user = &tb.User{ID: 917186410}
 var poller = &tb.LongPoller{Timeout: 15 * time.Second}
 var spamProtected = tb.NewMiddlewarePoller(poller, func(upd *tb.Update) bool {
 	if upd.Message == nil {
@@ -83,7 +83,7 @@ func main() {
 		_, _ = os.Create("kimchipre.txt")
 	}
 	bot, err := tb.NewBot(tb.Settings{
-		Token:  "TELEGRAM_TOKEN",
+		Token:  "1961044133:AAH8xNQ0yziGEc5BuUYUdSm-pHwutINBOQM",
 		Poller: spamProtected,
 	})
 	if err != nil {
@@ -132,6 +132,7 @@ func kimchipri() float64{
 		client := binance.NewClient("", "")
 		prices, err := client.NewListPricesService().Symbol("BTCUSDT").Do(context.Background())
 		if err != nil {
+			fmt.Println(err)
 			_, _ = bp.Send(user, "바이낸스 비트코인 가격을 요청할 수 없습니다.")
 			return 0
 		}
@@ -197,6 +198,7 @@ func kimchi() {
 			}
 			time.Sleep(5 * time.Second)
 		}
+		time.Sleep(5 * time.Second)
 	}
 }
 func NeverExit(f func()) {
